@@ -56,20 +56,27 @@ export function dayRate(ratePerHour) {
    * @param {number} ratePerHour
    * @param {number} numDays: number of days the project spans
    * @param {number} discount: for example 20% written as 0.2
-   * @returns {number} the rounded up discounted rate
+   * @return {number} the rounded up discounted rate
    */
   export function priceWithMonthlyDiscount(ratePerHour, numDays, discount) {
+    
     const hoursPerDay = 8
-  
-    const dayPerMonth = 22
+    const totalWithoutDiscount = (hoursPerDay * numDays) * ratePerHour
+
+    if (discount === 0){
+      return totalWithoutDiscount
+    }
     
-    const hoursPerMounth = dayPerMonth * hoursPerDay
-  
-    const totalMonths = numDays / dayPerMonth
-    
-    const valuePerHour = ratePerHour * hoursPerMounth
+    const totalMonthComplete = Math.floor(numDays / 22)
+    const totalDiscountedDays = totalMonthComplete * 22
+    const totalDiscountedRate = totalDiscountedDays * hoursPerDay * ratePerHour * (1 - discount)
+    const remainingDays = numDays - totalDiscountedDays
+    const totalWithDiscount = totalDiscountedRate + (remainingDays * hoursPerDay * ratePerHour)
+
+    return Math.ceil(totalWithDiscount)
   }
 
 
-  const actual = priceWithMonthlyDiscount(16, 70, 0);
-  const expected = 8960;
+  const actual = priceWithMonthlyDiscount(29.654321, 220, 0.112);
+  const expected = 46347;
+  console.log(actual, expected);
